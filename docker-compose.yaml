@@ -12,9 +12,3 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     restart: always
-  #watchdog:
-  #  build:
-  #   context: .
-  #  dockerfile: Dockerfile.watchdog
-  #volumes:
-  # - .:/app
