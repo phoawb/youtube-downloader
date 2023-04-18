@@ -1,12 +1,13 @@
 version: '3'
 services:
-  nicegui:
+  youtube-downloader:
     build:
       context: .
       dockerfile: Dockerfile
     command: python app/main.py
     volumes:
-      - .:/nicegui-app
+      #- .:/nicegui-app
+      - ./app:/nicegui-app/app
     ports:
       - '8000:8000'
     environment:
