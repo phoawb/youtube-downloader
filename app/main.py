@@ -1,6 +1,6 @@
 from nicegui import ui
 
-with ui.scene(width=1400, height=200) as scene:
+with ui.scene(width=1400, height=700) as scene:
     with scene.group().move(0, 0, 1):
         scene.text("A sphere").move(0, 0, 2)
         scene.sphere().material(color="#4488ff")
