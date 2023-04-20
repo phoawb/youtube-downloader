@@ -7,7 +7,7 @@ services:
     command: python app/main.py
     volumes:
       #- .:/nicegui-app
-      - ./app:/nicegui-app/app
+      - .:/nicegui-app
     ports:
       - '8000:8000'
     environment:
