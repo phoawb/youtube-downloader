@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Download Links</title>
+  </head>
+  <body>
+    <h2>Download Links</h2>
+    <table>
+      <tr>
+        <th>Quality</th>
+        <th>Filetype</th>
+        <th>Status</th>
+      </tr>
+      {% for stream in streams %}
+      <tr>
+        <td>{{ stream["resolution"] }}</td>
+        <td>{{ stream["mime_type"].split('/')[1] }}</td>
+        <td>
+          <form method="POST" action="{{ url_for('download') }}">
+            <input type="hidden" name="url" value="{{ stream["url"] }}" />
+            <input type="hidden" name="itag" value="{{ stream["itag"] }}" />
+            <input
+              type="hidden"
+              ,
+              name="stream_json"
+              ,
+              value="{{download_options_str[loop.index0]}}"
+            />
+            <input type="submit" value="Download" />
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>
