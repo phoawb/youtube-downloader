@@ -2,9 +2,19 @@
 <html>
   <head>
     <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
     <title>Download Links</title>
   </head>
   <body>
+    <form action="{{ url_for('index') }}" method="POST">
+      <label for="video_url">Enter a YouTube URL:</label>
+      <input type="text" name="video_url" id="video_url" />
+      <button type="submit">Submit</button>
+    </form>
     <h2>Download Links</h2>
     <table>
       <tr>
