@@ -3,13 +3,7 @@ services:
   youtube-downloader:
     build:
       context: .
-      dockerfile: Dockerfile
-    command: python app/main.py
-    volumes:
-      #- .:/nicegui-app
-      - .:/nicegui-app
     ports:
       - '8000:8000'
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: always
+    volumes:
+      - .:/flask-app
