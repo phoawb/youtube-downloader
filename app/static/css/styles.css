@@ -1,9 +1,12 @@
 body {
+  margin: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
   min-height: 100vh;
+  overscroll-behavior: none;
 }
 
 body {
@@ -26,79 +29,136 @@ h2 {
 
 form {
   margin: 0 auto;
-  width: 400px;
+  width: 500px;
   text-align: center;
+  display: inline-block;
 }
 
 input[type='text'] {
-  width: 100%;
+  width: 70%;
   padding: 10px;
   margin: 10px 0;
   font-size: 18px;
   border-radius: 5px;
-  border: none;
-  background-color: #005555; /* Darker teal */
-  color: white;
+  background-color: white;
+  color: black;
+}
+
+input[type='text']:focus {
+  outline: 2px solid black;
 }
 
 button[type='submit'] {
-  display: block;
-  width: 100%;
-  padding: 10px;
+  display: inline-block;
+  width: auto;
+  padding: 12px;
   margin-top: 10px;
+  margin-left: 5px;
   font-size: 18px;
   border-radius: 5px;
   border: none;
-  background-color: #007777; /* Lighter teal */
-  color: white;
+  background-color: #c0c0c0;
+  color: black;
+  font-size: medium;
+  border-top: 2px solid white;
+  border-left: 2px solid white;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 button[type='submit']:hover {
-  background-color: #009999; /* Turquoise */
+  border-top: 2px solid black;
+  border-left: 2px solid black;
 }
 
 table {
   margin: 0 auto;
-  width: 80%;
+  width: 50%;
   border-collapse: collapse;
+  color: black;
 }
 
 th,
 td {
   padding: 10px;
-  text-align: left;
-  border: 1px solid white;
+  text-align: center;
+  border: 1px solid black;
 }
 
 th {
-  background-color: #009999; /* Turquoise */
-  color: white;
+  background-color: #c0c0c0;
+  color: black;
 }
 
 tr:nth-child(even) {
-  background-color: #007777; /* Lighter teal */
+  background-color: #f6f6f6;
 }
 
 tr:nth-child(odd) {
-  background-color: #005555; /* Darker teal */
+  background-color: #c0c0c0;
 }
 
 input[type='submit'] {
   display: block;
-  width: 100%;
+  width: 90%;
   padding: 10px;
-  margin-top: 10px;
+  margin-top: 5px;
   font-size: 18px;
   border-radius: 5px;
-  border: none;
-  background-color: #009999; /* Turquoise */
-  color: white;
+  background-color: #c0c0c0; /* Turquoise */
+  color: black;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 input[type='submit']:hover {
-  background-color: #00cccc; /* Lighter turquoise */
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+}
+
+td form {
+  display: flex;
+  justify-content: center;
+}
+
+.download-form {
+  width: 300px;
+}
+/* Loading bar css */
+.lds-facebook {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-facebook div {
+  display: inline-block;
+  position: absolute;
+  left: 8px;
+  width: 16px;
+  background: #fff;
+  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+.lds-facebook div:nth-child(1) {
+  left: 8px;
+  animation-delay: -0.24s;
+}
+.lds-facebook div:nth-child(2) {
+  left: 32px;
+  animation-delay: -0.12s;
+}
+.lds-facebook div:nth-child(3) {
+  left: 56px;
+  animation-delay: 0;
+}
+@keyframes lds-facebook {
+  0% {
+    top: 8px;
+    height: 64px;
+  }
+  50%,
+  100% {
+    top: 24px;
+    height: 32px;
+  }
 }

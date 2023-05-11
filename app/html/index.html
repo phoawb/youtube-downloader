@@ -7,14 +7,43 @@
       type="text/css"
       href="{{ url_for('static', filename='css/styles.css') }}"
     />
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename='js/script.js') }}"
+    ></script>
+
     <title>YouTube Downloader</title>
   </head>
   <body>
     <h1>YouTube Downloader</h1>
-    <form action="{{ url_for('index') }}" method="POST">
+    <form
+      action="{{ url_for('index') }}"
+      method="POST"
+      id="form"
+      onsubmit="handleInput()"
+    >
       <label for="video_url">Enter a YouTube URL:</label>
-      <input type="text" name="video_url" id="video_url" />
-      <button type="submit">Submit</button>
+      <input
+        type="text"
+        name="video_url"
+        id="video_url"
+        pattern="^(https?:\/\/)?(www\.youtube\.com|youtu\.be)\/watch\?.+$"
+        oninvalid="setCustomValidity('Please enter a valid YouTube URL')"
+        oninput="setCustomValidity('')"
+      />
+      <button type="submit" id="submit_button">Submit</button>
     </form>
+    <div id="loading-animation" style="display: none">
+      <div class="lds-facebook">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <script
+      defer
+      type="text/javascript"
+      src="{{ url_for('static', filename='js/script.js') }}"
+    ></script>
   </body>
 </html>

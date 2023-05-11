@@ -12,7 +12,14 @@
   <body>
     <form action="{{ url_for('index') }}" method="POST">
       <label for="video_url">Enter a YouTube URL:</label>
-      <input type="text" name="video_url" id="video_url" />
+      <input
+        type="text"
+        name="video_url"
+        id="video_url"
+        pattern="^(https?:\/\/)?(www\.youtube\.com|youtu\.be)\/watch\?.+$"
+        oninvalid="setCustomValidity('Please enter a valid YouTube URL')"
+        oninput="setCustomValidity('')"
+      />
       <button type="submit">Submit</button>
     </form>
     <h2>Download Links</h2>
@@ -27,7 +34,11 @@
         <td>{{ stream["resolution"] }}</td>
         <td>{{ stream["mime_type"].split('/')[1] }}</td>
         <td>
-          <form method="POST" action="{{ url_for('download') }}">
+          <form
+            method="POST"
+            action="{{ url_for('download') }}"
+            class="download-form"
+          >
             <input type="hidden" name="url" value="{{ stream["url"] }}" />
             <input type="hidden" name="itag" value="{{ stream["itag"] }}" />
             <input

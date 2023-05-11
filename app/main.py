@@ -1,85 +1,95 @@
-from nicegui import ui
-from pytube import YouTube
-from utils.util import duration_string_formatter
+from flask import Flask, render_template, request, redirect, url_for, send_file
+from pytube import YouTube, Stream, monostate
 from time import sleep
+from io import BytesIO
+import json
+
+app = Flask(__name__, template_folder="html", static_url_path="/static")
 
 
-class Youtube_d:
-    def __init__(self) -> None:
-        self.thumbnail_url = "https://i.ytimg.com/vi/VbOeopWF6Fc/sddefault.jpg"
-        self.title = "Original / Оригинал - Сен Қайдан Биласан (disco, Uzbekistan USSR, 1981)"
-        self.length = 289
+def download_video(url: str) -> YouTube:
+    video = YouTube(url)
+    count = 0
+    while True:
+        try:
+            # Attempt to retrieve the video streams
+            video.streams
+            break  # If successful, exit the loop
+        except Exception as e:
+            # If unsuccessful, print the error message and wait a bit before retrying
+            print(f"Error: {e}", "Retrying...", count)
+            count += 1
+            sleep(0.5)
+    return video
 
 
-@ui.page('/')
-def home() -> None:
-
-    def table_download(stream):
-        print(stream)
-        stream.download()
-
-    def generate_download_table(yt: YouTube) -> None:
-        youtube_video_streams = yt.streams.filter(
-            progressive=True, file_extension="mp4").order_by("resolution").desc()
-        youtube_table_rows = []
-        for stream in youtube_video_streams:
-            row = {"Quality": stream.resolution,
-                   "Status": ui.link("download", stream.url)}
-            # youtube_table.add_rows(row)
-
-# row = {"Quality": stream.}
-# print(yt.streams.filter(progressive=True))
-# for row in youtube_table_rows:
-#   youtube_table.add_rows(row)
-# print(yt.streams.filter(only_audio=True))
-
-    def fetch_video() -> None:
-        yt = Youtube_d()
-        """yt = YouTube(youtube_link.value)
-        debug_cnt = 0
-        while True:
-            try:
-                title = yt.title
-                break
-            except:
-                debug_cnt += 1
-                print("failed to get video, reloading...", debug_cnt)
-                yt = YouTube(youtube_link.value)
-                sleep(0.5)
-                continue """
-        youtube_thumbnail.set_source(yt.thumbnail_url)
-        youtube_title.set_text(yt.title)
-        youtube_duration.set_text(
-            "Duration: " + duration_string_formatter(yt.length))
-        # generate_download_table(yt)
-        card.set_visibility("visible")
-
-    with ui.column().classes(":param add: absolute-center") as main_column:
-        with ui.row() as row:
-            youtube_link = ui.input('Paste Youtube Link', validation={
-                                    "Enter a valid YouTube link!": lambda value: value.startswith("https://www.youtube.com/watch")})
-            button = ui.button('Start')
-        with ui.card() as card:
-            with ui.splitter() as splitter:
-                with splitter.before:
-                    youtube_thumbnail = ui.image()
-                    youtube_title = ui.label()
-                    youtube_duration = ui.label()
-                with splitter.after:
-                    """ youtube_table = ui.table(columns=[
-                        {"name": "Quality", "label": "Quality",
-                         "field": "Quality", "required": True},
-                        {"name": "Status", "label": "Status", "field": "Status"}
-                    ], rows=[]) """
-                    with ui.row().classes(add="space-x-4") as table_row:
-                        with ui.column() as column1:
-                            ui.label("Quality")
-                        with ui.column() as column2:
-                            ui.label("Status")
-        card.visible = False
-        youtube_link.on(
-            'keydown.enter', fetch_video)
-        button.on("click", fetch_video)
+def to_dict(stream: Stream):
+    return {"itag": stream.itag,
+            "resolution": stream.resolution,
+            "mimeType": stream.mime_type + "; " + "codecs=\"" + ",".join(stream.codecs) + "\"",
+            "mime_type": stream.mime_type,
+            "url": stream.url,
+            "includes_audio_track": stream.includes_audio_track,
+            "includes_video_track": stream.includes_video_track,
+            "is_progressive": stream.is_progressive,
+            "is_otf": stream.is_otf,
+            "filesize": stream.filesize,
+            "duration": stream._monostate.duration,
+            "title": stream._monostate.title,
+            "bitrate": stream.bitrate,
+            "contentLength": stream._filesize}
 
 
-ui.run(port=8000)
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    error_msg = ""
+    if request.method == 'POST':
+
+        # Get the YouTube video URL from the form input
+        video_url = request.form['video_url']
+
+        # Extract video information using PyTube
+        video = download_video(video_url)
+        download_options = video.streams.filter(
+            progressive=True).order_by("resolution").desc()
+        stream = download_options.first()
+        if not stream:
+            raise Exception
+        stream_json = json.dumps(to_dict(stream))
+        download_options_str = [json.dumps(
+            to_dict(stream)) for stream in download_options]
+        file1 = open('sample.txt', 'w')
+        file1.write(stream_json)
+        file1.close()
+        streams = [to_dict(stream) for stream in download_options]
+        streams_json_object = json.dumps(streams)
+        with open("sample.json", "w") as outfile:
+            outfile.write(streams_json_object)
+
+        """f = open("sample.json")
+        streams = json.load(f)
+        f.close()
+        download_options_str = [json.dumps(stream) for stream in streams] """
+
+        return render_template('download.html', streams=streams, download_options_str=download_options_str)
+
+    # If no URL has been submitted yet, render the main page
+    return render_template('index.html')
+
+
+@app.route('/download', methods=['POST'])
+def download():
+    if request.method == "POST":
+        buffer = BytesIO()
+        stream_json = request.form["stream_json"]
+        stream_dict = json.loads(stream_json)
+        stream = Stream(stream_dict, monostate.Monostate(
+            on_complete=None, on_progress=None, title=stream_dict["title"], duration=stream_dict["duration"]))
+        stream.stream_to_buffer(buffer)
+        buffer.seek(0)
+        return send_file(buffer, as_attachment=True, download_name=(stream.title + "." + stream.mime_type.split("/")[1]), mimetype=stream.mime_type)
+    return redirect(url_for("index"))
+
+
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=8000, debug=True)
