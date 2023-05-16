@@ -1,4 +1,4 @@
-from pytube import YouTube
+from pytube import YouTube, Stream
 from time import sleep
 
 
@@ -6,7 +6,7 @@ def duration_string_formatter(seconds: int) -> str:
     m, s = divmod(seconds, 60)
     h, m = divmod(m, 60)
     hour_str: str = ""
-    minute_str: str = ""
+    minute_str: str = "00:"
     second_str: str = "00"
     if not h == 0:
         hour_str = f"{h}:"
@@ -33,3 +33,20 @@ def download_video(url: str) -> YouTube:
             count += 1
             sleep(0.5)
     return video
+
+
+def to_dict(stream: Stream):
+    return {"itag": stream.itag,
+            "resolution": stream.resolution,
+            "mimeType": stream.mime_type + "; " + "codecs=\"" + ",".join(stream.codecs) + "\"",
+            "mime_type": stream.mime_type,
+            "url": stream.url,
+            "includes_audio_track": stream.includes_audio_track,
+            "includes_video_track": stream.includes_video_track,
+            "is_progressive": stream.is_progressive,
+            "is_otf": stream.is_otf,
+            "filesize": stream.filesize,
+            "duration": stream._monostate.duration,
+            "title": stream._monostate.title,
+            "bitrate": stream.bitrate,
+            "contentLength": stream._filesize}

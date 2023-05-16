@@ -2,26 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, send_file
 from pytube import Stream, monostate
 from io import BytesIO
 import json
-from utils.util import download_video
+from utils.util import download_video, duration_string_formatter, to_dict
 
 app = Flask(__name__, template_folder="html", static_url_path="/static")
-
-
-def to_dict(stream: Stream):
-    return {"itag": stream.itag,
-            "resolution": stream.resolution,
-            "mimeType": stream.mime_type + "; " + "codecs=\"" + ",".join(stream.codecs) + "\"",
-            "mime_type": stream.mime_type,
-            "url": stream.url,
-            "includes_audio_track": stream.includes_audio_track,
-            "includes_video_track": stream.includes_video_track,
-            "is_progressive": stream.is_progressive,
-            "is_otf": stream.is_otf,
-            "filesize": stream.filesize,
-            "duration": stream._monostate.duration,
-            "title": stream._monostate.title,
-            "bitrate": stream.bitrate,
-            "contentLength": stream._filesize}
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -34,14 +17,21 @@ def index():
 
         # Extract video information using PyTube
         video = download_video(video_url)
+        video_information = {
+            "thumbnail_url": video.thumbnail_url,
+            "title": video.title,
+            "duration": duration_string_formatter(video.length)
+        }
         download_options = video.streams.filter(
             progressive=True).order_by("resolution").desc()
+        print(download_options)
         stream = download_options.first()
         if not stream:
             raise Exception
         download_options_str = [json.dumps(
             to_dict(stream)) for stream in download_options]
         streams = [to_dict(stream) for stream in download_options]
+
         """stream_json = json.dumps(to_dict(stream))
         file1 = open('sample.txt', 'w')
         file1.write(stream_json)
@@ -55,7 +45,7 @@ def index():
         f.close()
         download_options_str = [json.dumps(stream) for stream in streams] """
 
-        return render_template('download.html', streams=streams, download_options_str=download_options_str)
+        return render_template('download.html', streams=streams, download_options_str=download_options_str, video_information=video_information)
 
     # If no URL has been submitted yet, render the main page
     return render_template('index.html')
