@@ -24,13 +24,3 @@ function openTab(evt, tabName) {
   document.getElementById(tabName).style.display = 'table-row';
   evt.currentTarget.className += ' active';
 }
-
-// Default to showing the first tab on page load
-document.getElementById("{{ streams[0]['itag'] }}").style.display = 'table-row';
-document.getElementsByClassName;
-
-/* var form = document.getElementById('form');
-form.addEventListener('submit', handleInput); */
-
-/* var input = document.getElementById('video_url');
-input.addEventListener('keyup', handleInput); */
