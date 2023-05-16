@@ -1,26 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file
-from pytube import YouTube, Stream, monostate
-from time import sleep
+from pytube import Stream, monostate
 from io import BytesIO
 import json
+from utils.util import download_video
 
 app = Flask(__name__, template_folder="html", static_url_path="/static")
-
-
-def download_video(url: str) -> YouTube:
-    video = YouTube(url)
-    count = 0
-    while True:
-        try:
-            # Attempt to retrieve the video streams
-            video.streams
-            break  # If successful, exit the loop
-        except Exception as e:
-            # If unsuccessful, print the error message and wait a bit before retrying
-            print(f"Error: {e}", "Retrying...", count)
-            count += 1
-            sleep(0.5)
-    return video
 
 
 def to_dict(stream: Stream):
