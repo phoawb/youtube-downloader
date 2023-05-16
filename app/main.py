@@ -55,16 +55,16 @@ def index():
         stream = download_options.first()
         if not stream:
             raise Exception
-        stream_json = json.dumps(to_dict(stream))
         download_options_str = [json.dumps(
             to_dict(stream)) for stream in download_options]
+        streams = [to_dict(stream) for stream in download_options]
+        """stream_json = json.dumps(to_dict(stream))
         file1 = open('sample.txt', 'w')
         file1.write(stream_json)
         file1.close()
-        streams = [to_dict(stream) for stream in download_options]
         streams_json_object = json.dumps(streams)
         with open("sample.json", "w") as outfile:
-            outfile.write(streams_json_object)
+            outfile.write(streams_json_object) """
 
         """f = open("sample.json")
         streams = json.load(f)
