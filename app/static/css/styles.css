@@ -124,6 +124,42 @@ td form {
 .download-form {
   width: 300px;
 }
+
+.video-info-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30vh; /* Set the height using viewport height */
+  width: 50%;
+  background-color: #c0c0c0;
+}
+
+.thumbnail {
+  width: auto;
+  height: 100%;
+  object-fit: contain; /* Preserve the aspect ratio of the thumbnail */
+}
+
+.info-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-left: 20px; /* Add some margin to the left of the info column */
+}
+
+.video-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px; /* Add some margin below the title */
+  color: black;
+}
+
+.video-duration {
+  font-size: 16px;
+  color: black;
+}
+
 /* Loading bar css */
 .lds-facebook {
   display: inline-block;

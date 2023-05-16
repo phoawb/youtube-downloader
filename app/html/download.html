@@ -10,7 +10,12 @@
     <title>Download Links</title>
   </head>
   <body>
-    <form action="{{ url_for('index') }}" method="POST">
+    <form
+      action="{{ url_for('index') }}"
+      method="POST"
+      id="form"
+      onsubmit="handleInput()"
+    >
       <label for="video_url">Enter a YouTube URL:</label>
       <input
         type="text"
@@ -22,6 +27,13 @@
       />
       <button type="submit">Submit</button>
     </form>
+    <div id="loading-animation" style="display: none">
+      <div class="lds-facebook">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
     <h2>Download Links</h2>
     <table>
       <tr>
@@ -54,5 +66,23 @@
       </tr>
       {% endfor %}
     </table>
+    <div class="video-info-container">
+      <img
+        src="{{ video_information.thumbnail_url }}"
+        alt="Video Thumbnail"
+        class="thumbnail"
+      />
+      <div class="info-column">
+        <div class="video-title">{{ video_information.title }}</div>
+        <div class="video-duration">
+          Duration: {{ video_information.duration }}
+        </div>
+      </div>
+    </div>
+    <script
+      defer
+      type="text/javascript"
+      src="{{ url_for('static', filename='js/script.js') }}"
+    ></script>
   </body>
 </html>
